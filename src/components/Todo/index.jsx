@@ -13,6 +13,28 @@ class index extends Component {
     };
   }
 
+  componentWillMount() {
+    this.setState({
+      items: [
+        {
+          id: uuidv4(),
+          task: 'Default Task 1',
+          completed: false,
+        },
+        {
+          id: uuidv4(),
+          task: 'Default Task 2',
+          completed: true,
+        },
+        {
+          id: uuidv4(),
+          task: 'Default Task 3',
+          completed: false,
+        },
+      ],
+    });
+  }
+
   handleOnChange = (e) => {
     const { target: { value } } = e;
 
@@ -37,19 +59,46 @@ class index extends Component {
     });
   };
 
+  markAsCompleted = (id) => {
+    const foundTask = this.state.items.find(
+      task => task.id === id,
+    );
+
+    foundTask.completed = true;
+
+    this.setState({
+      items: [
+        ...this.state.items,
+        ...foundTask,
+      ],
+    });
+  };
+
+  removeTask = (id) => {
+    const filteredTasks = this.state.items.filter(
+      task => task.id !== id,
+    );
+
+    this.setState({
+      items: filteredTasks,
+    });
+  };
+
   render() {
     return (
       <div className="Todo">
         <h1>New Task:</h1>
-
         <form onSubmit={this.handleOnSubmit}>
           <input
             value={this.state.task}
             onChange={this.handleOnChange}
           />
         </form>
-
-        <List items={this.state.items} />
+        <List
+          items={this.state.items}
+          markAsCompleted={this.markAsCompleted}
+          removeTask={this.removeTask}
+        />
       </div>
     );
   }
